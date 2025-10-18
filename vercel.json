@@ -1,30 +1,19 @@
 {
   "version": 2,
   "name": "tw-renpy-generator",
-  
-  "routes": [
-    {
-      "src": "/js/(.*)",
-      "dest": "/js/$1"
-    },
-    {
-      "src": "/css/(.*)",
-      "dest": "/css/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "env": {
     "GEMINI_API_KEY": "@gemini-api-key",
     "OPENAI_API_KEY": "@openai-api-key"
   },
-  "functions": {},
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x",
+      "memory": 128,
+      "maxDuration": 10
     }
-  ]
+  },
+  "rewrites": [
+    { "source": "/(?!api/).*", "destination": "/index.html" }
+  ],
+  "cleanUrls": true
 }
