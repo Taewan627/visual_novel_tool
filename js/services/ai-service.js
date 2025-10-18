@@ -35,26 +35,13 @@ export class AIService {
         }
         
         try {
-            const response = await fetch(`${this.baseURL}/chat/completions`, {
+            const response = await fetch('/api/story', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: this.model,
-                    messages: [
-                        {
-                            role: 'system',
-                            content: 'You are a helpful assistant that generates questions for visual novel stories based on the TW model (bottleneck-based story control).'
-                        },
-                        {
-                            role: 'user',
-                            content: this.buildQuestionPrompt(context)
-                        }
-                    ],
-                    max_tokens: 150,
-                    temperature: 0.7
+                    prompt: this.buildQuestionPrompt(context)
                 })
             });
             
@@ -63,7 +50,14 @@ export class AIService {
             }
             
             const data = await response.json();
-            const content = data.choices[0].message.content;
+            
+            // Hugging Face API 응답 처리
+            let content = '';
+            if (data && data[0] && data[0].generated_text) {
+                content = data[0].generated_text;
+            } else {
+                throw new Error('예상치 못한 API 응답 형식');
+            }
             
             return this.parseQuestionResponse(content, context);
         } catch (error) {
@@ -82,26 +76,24 @@ export class AIService {
         }
         
         try {
-            const response = await fetch(`${this.baseURL}/chat/completions`, {
+            // 질문 종류에 따라 다른 API 엔드포인트 사용
+            let endpoint = '/api/story';
+            if (question.kind === 'character_action') {
+                endpoint = '/api/character';
+            } else if (question.kind === 'dialogue_style') {
+                endpoint = '/api/dialogue';
+            }
+            
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: this.model,
-                    messages: [
-                        {
-                            role: 'system',
-                            content: 'You are a helpful assistant that generates story events for visual novels based on the TW model (bottleneck-based story control).'
-                        },
-                        {
-                            role: 'user',
-                            content: this.buildEventPrompt(question, answer)
-                        }
-                    ],
-                    max_tokens: 200,
-                    temperature: 0.7
+                    prompt: this.buildEventPrompt(question, answer),
+                    description: this.buildEventPrompt(question, answer),
+                    utterance: answer,
+                    context: question.ask
                 })
             });
             
@@ -110,7 +102,14 @@ export class AIService {
             }
             
             const data = await response.json();
-            const content = data.choices[0].message.content;
+            
+            // Hugging Face API 응답 처리
+            let content = '';
+            if (data && data[0] && data[0].generated_text) {
+                content = data[0].generated_text;
+            } else {
+                throw new Error('예상치 못한 API 응답 형식');
+            }
             
             return this.parseEventResponse(content, question, answer);
         } catch (error) {
@@ -438,15 +437,16 @@ The response should be in JSON format with the following structure:
             return { status: 'simulation', message: '시뮬레이션 모드' };
         }
         
-        if (!this.apiKey) {
-            return { status: 'no_api_key', message: 'API 키가 설정되지 않음' };
-        }
-        
         try {
-            const response = await fetch(`${this.baseURL}/models`, {
+            // 서버리스 API 엔드포인트 상태 확인
+            const response = await fetch('/api/story', {
+                method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`
-                }
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: 'test'
+                })
             });
             
             if (response.ok) {
@@ -457,5 +457,41 @@ The response should be in JSON format with the following structure:
         } catch (error) {
             return { status: 'error', message: `API 확인 실패: ${error.message}` };
         }
+    }
+
+    /**
+     * 스토리 API 호출
+     */
+    async callStory(prompt) {
+        const r = await fetch('/api/story', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt })
+        });
+        return r.json();
+    }
+
+    /**
+     * 캐릭터 API 호출
+     */
+    async callCharacter(description) {
+        const r = await fetch('/api/character', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ description })
+        });
+        return r.json();
+    }
+
+    /**
+     * 대화 API 호출
+     */
+    async callDialogue(utterance, context) {
+        const r = await fetch('/api/dialogue', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ utterance, context })
+        });
+        return r.json();
     }
 }

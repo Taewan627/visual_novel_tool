@@ -2,19 +2,26 @@
 
 이 문서는 TW 모델 렌파이 비주얼노벨 생성기를 Vercel에 배포하는 방법을 안내합니다.
 
+## 🏗️ 아키텍처
+
+이 프로젝트는 다음과 같은 하이브리드 아키텍처를 사용합니다:
+- **정적 SPA**: 클라이언트 측 JavaScript 애플리케이션
+- **서버리스 함수**: Vercel Functions를 통한 API 프록시
+- **API 키 보안**: 서버리스 함수에서 API 키 관리 (클라이언트 노출 방지)
+
 ## 🚀 배포 전 준비 사항
 
-### 1. API 키 설정
+### 1. Hugging Face API 키 설정
 
-1. **Gemini API 키 발급**
-   - [Google AI Studio](https://aistudio.google.com/app/apikey) 방문
+1. **Hugging Face API 키 발급**
+   - [Hugging Face](https://huggingface.co/settings/tokens) 방문
    - 새 API 키 생성
    - 키 복사
 
-2. **OpenAI API 키 발급** (선택사항)
-   - [OpenAI API](https://platform.openai.com/api-keys) 방문
-   - 새 API 키 생성
-   - 키 복사
+2. **사용할 모델 선택**
+   - 스토리 생성: `google/flan-t5-large` (기본값)
+   - 캐릭터 생성: `google/flan-t5-large` (기본값)
+   - 대화 생성: `google/flan-t5-large` (기본값)
 
 ### 2. 환경 변수 설정
 
@@ -24,30 +31,61 @@
 cp .env.example .env
 
 # .env 파일에 API 키 입력
-GEMINI_API_KEY=your_gemini_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here
+HF_API_KEY=your_huggingface_api_key_here
+MODEL_STORY=google/flan-t5-large
+MODEL_CHAR=google/flan-t5-large
+MODEL_DIALOGUE=google/flan-t5-large
 ```
 
 #### Vercel 배포 환경
 Vercel 대시보드에서 환경 변수 설정:
 1. Vercel 프로젝트 설정으로 이동
 2. Environment Variables 섹션에서 다음 변수 추가:
-   - `GEMINI_API_KEY`: Gemini API 키
-   - `OPENAI_API_KEY`: OpenAI API 키 (선택사항)
+   - `HF_API_KEY`: Hugging Face API 키
+   - `MODEL_STORY`: 스토리 생성 모델 (예: `google/flan-t5-large`)
+   - `MODEL_CHAR`: 캐릭터 생성 모델 (예: `google/flan-t5-large`)
+   - `MODEL_DIALOGUE`: 대화 생성 모델 (예: `google/flan-t5-large`)
 
 ## 📋 배포 단계
 
-### 1. Vercel CLI 설치
+### 방법 1: Vercel 웹사이트에서 직접 배포 (권장)
+
+1. **GitHub 저장소 연동**
+   - 프로젝트를 GitHub에 푸시
+   - [Vercel](https://vercel.com)에 로그인
+   - "New Project" 클릭
+   - GitHub 저장소 선택
+
+2. **프로젝트 설정**
+   - Project Name: `tw-renpy-generator` (또는 원하는 이름)
+   - Framework Preset: `Other`
+   - Root Directory: `./` (기본값)
+   - Build Command: 비워두기 (정적 사이트이므로 빌드 불필요)
+   - Output Directory: 비워두기
+   - Install Command: `npm install` (기본값)
+
+3. **환경 변수 설정**
+   - Environment Variables 섹션에서 다음 변수 추가:
+     - `GEMINI_API_KEY`: Gemini API 키
+     - `OPENAI_API_KEY`: OpenAI API 키 (선택사항)
+
+4. **배포**
+   - "Deploy" 버튼 클릭
+   - 배포가 완료되면 자동으로 URL이 생성됨
+
+### 방법 2: Vercel CLI 사용
+
+#### 1. Vercel CLI 설치
 ```bash
 npm i -g vercel
 ```
 
-### 2. Vercel 로그인
+#### 2. Vercel 로그인
 ```bash
 vercel login
 ```
 
-### 3. 프로젝트 배포
+#### 3. 프로젝트 배포
 ```bash
 # 프로젝트 루트 디렉토리에서 실행
 vercel
@@ -60,6 +98,8 @@ vercel
 # - In which directory is your code located? ./ (기본값)
 # - Want to override the settings? No (기본값)
 ```
+
+**참고**: 이 프로젝트는 순수 정적 사이트이므로 별도의 빌드 과정이 필요 없습니다. Vercel이 자동으로 정적 파일을 호스팅합니다.
 
 ### 4. 환경 변수 설정 (Vercel 대시보드)
 1. Vercel 프로젝트 대시보드로 이동
