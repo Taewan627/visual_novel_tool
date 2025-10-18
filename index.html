@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TW 모델 렌파이 비주얼노벨 생성기</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/timeline.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>TW 모델</h1>
+                <span>레너파이 비주얼노벨 생성기</span>
+            </div>
+            <div class="header-actions">
+                <button id="save-btn" class="btn btn-secondary">
+                    <span class="icon">💾</span>
+                    저장
+                </button>
+                <button id="load-btn" class="btn btn-secondary">
+                    <span class="icon">📁</span>
+                    불러오기
+                </button>
+                <button id="export-btn" class="btn btn-primary">
+                    <span class="icon">📦</span>
+                    RPY 내보내기
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- 좌측 패널: 타임라인 -->
+        <aside class="sidebar left-sidebar">
+            <div class="sidebar-header">
+                <h2>스토리 타임라인</h2>
+                <div class="progress-info">
+                    <span class="progress-label">전체 진행률</span>
+                    <span id="total-progress" class="progress-value">0%</span>
+                </div>
+            </div>
+            <div class="sidebar-content">
+                <div id="story-timeline" class="story-timeline">
+                    <!-- 타임라인은 JavaScript로 동적으로 생성 -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- 중앙 패널: 질문-답변 인터페이스 -->
+        <section class="main-content">
+            <!-- 스토리 정보 입력 섹션 -->
+            <div id="story-info-section" class="question-section">
+                <div class="section-header">
+                    <h2>스토리 기본 정보</h2>
+                    <p>TW 모델 기반 비주얼노벨의 기본 정보를 입력하세요.</p>
+                </div>
+                <div class="section-content">
+                    <form id="story-info-form" class="story-form">
+                        <div class="form-group">
+                            <label for="title">제목</label>
+                            <input type="text" id="title" name="title" placeholder="스토리 제목을 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="protagonist">주인공</label>
+                            <input type="text" id="protagonist" name="protagonist" placeholder="주인공 이름을 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="theme">테마</label>
+                            <input type="text" id="theme" name="theme" placeholder="스토리 테마를 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">설명</label>
+                            <textarea id="description" name="description" placeholder="스토리에 대한 간단한 설명을 입력하세요" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-large">스토리 시작하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 질문-답변 섹션 -->
+            <div id="question-section" class="question-section" style="display: none;">
+                <div class="section-header">
+                    <h2>스토리 생성</h2>
+                    <p>AI가 제시하는 질문에 답변하여 스토리를 만들어보세요.</p>
+                </div>
+                <div class="section-content">
+                    <div id="chat-container" class="chat-container">
+                        <!-- 채팅 메시지는 JavaScript로 동적으로 생성 -->
+                    </div>
+                    <div id="next-step-container" class="next-step-container" style="display: none;">
+                        <button id="next-step-button" class="btn btn-primary">
+                            다음 단계로 진행
+                            <span class="arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 우측 패널: 정보 -->
+        <aside class="sidebar right-sidebar">
+            <div class="sidebar-header">
+                <h2>스토리 정보</h2>
+                <button id="edit-story-info" class="btn-icon edit-button" title="스토리 정보 편집">
+                    <span class="icon">✏️</span>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div id="story-info-panel" class="story-info-panel">
+                    <!-- 스토리 정보는 JavaScript로 동적으로 생성 -->
+                </div>
+                
+                <div class="variables-section">
+                    <h3>스토리 변수</h3>
+                    <div id="variables-list" class="variables-list">
+                        <!-- 변수 목록은 JavaScript로 동적으로 생성 -->
+                    </div>
+                </div>
+                
+                <div class="statistics-section">
+                    <h3>통계</h3>
+                    <div class="stats-list">
+                        <div class="stat-item">
+                            <span class="stat-label">이벤트</span>
+                            <span id="event-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">선택지</span>
+                            <span id="choice-count" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">답변</span>
+                            <span id="question-count" class="stat-value">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="status-info">
+                <span class="status-label">상태:</span>
+                <span id="app-status" class="status-value status-ready">준비됨</span>
+                <span class="status-label">마지막 저장:</span>
+                <span id="last-saved" class="status-value">없음</span>
+            </div>
+            <div class="footer-actions">
+                <a href="README.md" target="_blank" class="footer-link">도움말</a>
+                <a href="https://github.com/your-username/tw-renpy-generator" target="_blank" class="footer-link">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 모달 오버레이 -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none;">
+        <!-- 스토리 정보 편집 모달 -->
+        <div id="story-info-modal" class="modal" style="display: none;">
+            <div class="modal-header">
+                <h2>스토리 정보 편집</h2>
+                <button id="close-story-info-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-content">
+                <form id="edit-story-form" class="story-form">
+                    <div class="form-group">
+                        <label for="edit-title">제목</label>
+                        <input type="text" id="edit-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-protagonist">주인공</label>
+                        <input type="text" id="edit-protagonist" name="protagonist" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-theme">테마</label>
+                        <input type="text" id="edit-theme" name="theme" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-description">설명</label>
+                        <textarea id="edit-description" name="description" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-edit" class="btn btn-secondary">취소</button>
+                <button id="save-edit" class="btn btn-primary">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 알림 컨테이너 -->
+    <div id="notification-container" class="notification-container">
+        <!-- 알림은 JavaScript로 동적으로 생성 -->
+    </div>
+
+    <!-- 스크립트 로드 -->
+    <script type="module">
+        // 모듈 임포트 오류 처리
+        window.addEventListener('error', function(e) {
+            if (e.target && e.target.tagName === 'SCRIPT') {
+                console.error('스크립트 로드 실패:', e.target.src);
+                document.body.innerHTML += `
+                    <div class="error-message">
+                        <h3>스크립트 로드 실패</h3>
+                        <p>파일을 찾을 수 없습니다: ${e.target.src}</p>
+                        <p>웹 서버를 통해 접속하고 있는지 확인하세요.</p>
+                    </div>
+                `;
+            }
+        }, true);
+
+        // 모듈 로드
+        import('./js/app.js')
+            .then(() => {
+                console.log('애플리케이션이 성공적으로 로드되었습니다.');
+            })
+            .catch(error => {
+                console.error('애플리케이션 로드 실패:', error);
+                document.body.innerHTML += `
+                    <div class="error-message">
+                        <h3>애플리케이션 로드 실패</h3>
+                        <p>오류: ${error.message}</p>
+                        <p>ES6 모듈을 지원하는 브라우저에서 접속하고 있는지 확인하세요.</p>
+                        <p>또는 웹 서버를 통해 접속하고 있는지 확인하세요.</p>
+                    </div>
+                `;
+            });
+    </script>
+</body>
+</html>

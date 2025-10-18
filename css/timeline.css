@@ -1,0 +1,401 @@
+/* 스토리 타임라인 스타일 */
+
+.story-timeline {
+    padding: var(--spacing-md);
+    height: 100%;
+    overflow-y: auto;
+}
+
+.bottleneck-bar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* 병목 스타일 */
+.bottleneck {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.bottleneck.active {
+    border-left: 4px solid var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.bottleneck.completed {
+    border-left: 4px solid var(--success-color);
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+.bottleneck.disabled {
+    opacity: 0.6;
+    background-color: var(--bg-light);
+    border-color: var(--border-color);
+}
+
+.bottleneck.disabled .bottleneck-header h3 {
+    color: var(--text-secondary);
+}
+
+/* 병목 헤더 */
+.bottleneck-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.bottleneck-header h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.bottleneck-name {
+    font-weight: 600;
+}
+
+.bottleneck-english {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* 진행률 바 */
+.progress-bar {
+    width: 100px;
+    height: 6px;
+    background-color: var(--bg-light);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+    transition: width var(--transition-slow);
+    border-radius: 3px;
+}
+
+.bottleneck.completed .progress {
+    background: linear-gradient(90deg, var(--success-color), #1e7e34);
+}
+
+/* 세그먼트 컨테이너 */
+.segments {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+/* 세그먼트 스타일 */
+.segment {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
+    position: relative;
+    cursor: pointer;
+}
+
+.segment:hover {
+    background-color: var(--bg-secondary);
+}
+
+.segment.active {
+    background-color: rgba(0, 123, 255, 0.1);
+    border: 1px solid rgba(0, 123, 255, 0.3);
+}
+
+.segment.completed {
+    background-color: rgba(40, 167, 69, 0.1);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.segment.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 세그먼트 연결선 */
+.segment::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 32px;
+    width: 2px;
+    height: calc(100% + var(--spacing-sm));
+    background-color: var(--border-color);
+    z-index: 0;
+}
+
+.segment:last-child::before {
+    display: none;
+}
+
+.segment.active::before {
+    background-color: var(--primary-color);
+}
+
+.segment.completed::before {
+    background-color: var(--success-color);
+}
+
+/* 세그먼트 점 */
+.segment-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--bg-light);
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    z-index: 1;
+    transition: all var(--transition-fast);
+}
+
+.segment.active .segment-dot {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    animation: pulse 2s infinite;
+}
+
+.segment.completed .segment-dot {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.segment.disabled .segment-dot {
+    background-color: var(--text-muted);
+    border-color: var(--text-muted);
+}
+
+/* 세그먼트 레이블 */
+.segment-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    font-weight: 500;
+    flex: 1;
+    padding-top: 2px;
+}
+
+.segment.active .segment-label {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.segment.completed .segment-label {
+    color: var(--success-color);
+}
+
+.segment.disabled .segment-label {
+    color: var(--text-muted);
+}
+
+/* 현재 위치 표시 */
+.current-position {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--info-color);
+}
+
+.position-indicator {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.position-indicator::before {
+    content: '📍';
+    font-size: var(--font-size-base);
+}
+
+/* 병목 아이콘 */
+.bottleneck-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+.bottleneck[data-bottleneck="gi"] .bottleneck-icon {
+    background-color: var(--success-color);
+}
+
+.bottleneck[data-bottleneck="seung"] .bottleneck-icon {
+    background-color: var(--warning-color);
+}
+
+.bottleneck[data-bottleneck="ten"] .bottleneck-icon {
+    background-color: var(--danger-color);
+}
+
+.bottleneck[data-bottleneck="ketsu"] .bottleneck-icon {
+    background-color: var(--info-color);
+}
+
+/* 세그먼트 상태 표시기 */
+.segment-status {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.segment-status.active {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.segment-status.completed {
+    background-color: var(--success-color);
+    color: var(--text-light);
+}
+
+/* 타임라인 애니메이션 */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.bottleneck {
+    animation: slideInLeft 0.5s ease forwards;
+}
+
+.bottleneck:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.bottleneck:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.bottleneck:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.bottleneck:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* 세그먼트 확장/축소 */
+.segment-details {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    display: none;
+}
+
+.segment.expanded .segment-details {
+    display: block;
+    animation: fadeIn var(--transition-normal);
+}
+
+/* 이벤트 목록 */
+.event-list {
+    margin-top: var(--spacing-sm);
+}
+
+.event-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.event-item::before {
+    content: '•';
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* 선택지 목록 */
+.choice-list {
+    margin-top: var(--spacing-sm);
+}
+
+.choice-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.choice-item::before {
+    content: '▶';
+    color: var(--warning-color);
+    font-size: 10px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 992px) {
+    .story-timeline {
+        padding: var(--spacing-sm);
+    }
+    
+    .bottleneck-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .progress-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .segment-label {
+        font-size: 12px;
+    }
+    
+    .bottleneck-header h3 {
+        font-size: var(--font-size-base);
+    }
+    
+    .position-indicator {
+        font-size: 12px;
+    }
+}

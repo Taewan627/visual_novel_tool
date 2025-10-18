@@ -1,0 +1,27 @@
+{
+  "name": "tw-renpy-generator",
+  "version": "1.0.0",
+  "description": "TW 모델 기반 렌파이 비주얼노벨 생성기",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . -l 3000",
+    "build": "echo 'No build process required for this project'",
+    "test": "echo 'No tests specified yet'"
+  },
+  "keywords": [
+    "renpy",
+    "visual-novel",
+    "tw-model",
+    "story-generation",
+    "ai"
+  ],
+  "author": "TW Model Generator",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
