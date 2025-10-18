@@ -12,8 +12,9 @@
       "maxDuration": 10
     }
   },
-  "rewrites": [
-    { "source": "/(?!api/).*", "destination": "/index.html" }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },      // 1) API는 그대로
+    { "src": "/(.*)", "dest": "/index.html" }       // 2) 나머지는 SPA로
   ],
   "cleanUrls": true
 }
