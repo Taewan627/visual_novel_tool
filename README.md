@@ -215,14 +215,3 @@ vercel --prod
 #### 환경 변수 설정
 - `GEMINI_API_KEY`: Gemini API 키
 - `OPENAI_API_KEY`: OpenAI API 키 (선택사항)
-
-## 📞 연락처
-
-질문이나 제안이 있으시면 다음으로 연락주세요:
-
-- 이메일: your-email@example.com
-- GitHub Issues: [Issues 페이지](https://github.com/your-username/tw-renpy-generator/issues)
-
----
-
-⭐ 이 프로젝트가 마음에 드셨다면 스타를 남겨주세요!
